@@ -12,5 +12,6 @@ return [
 		'__pattern__' => [
 				'name' => '\w+'
 		],
-		'item' => ['index/item',['method'=>'get']]
+        'upload' => ['index/upload',['method'=>'post']],
+        'unload' => ['index/unload',['method'=>'get']]
 ];

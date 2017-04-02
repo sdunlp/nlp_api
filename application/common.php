@@ -10,3 +10,23 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
+
+function deleteDir($dir) {
+    $dh = opendir($dir);
+    while ($file = readdir($dh)) {
+        if ($file != "." && $file != "..") {
+            $fullPath = $dir . DS . $file;
+            if (!is_dir($fullPath)) {
+                unlink($fullPath);
+            } else {
+                deldir($fullPath);
+            }
+        }
+    }
+    closedir($dh);
+    if (rmdir($dir)) {
+        return true;
+    } else {
+        return false;
+    }
+}

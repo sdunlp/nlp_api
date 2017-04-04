@@ -11,6 +11,11 @@
 
 // 应用公共文件
 
+/**
+ * 删除目录
+ * @param $dir string 要删除的目录路径
+ * @return bool 删除是否成功
+ */
 function deleteDir($dir) {
     $dh = opendir($dir);
     while ($file = readdir($dh)) {
@@ -19,7 +24,7 @@ function deleteDir($dir) {
             if (!is_dir($fullPath)) {
                 unlink($fullPath);
             } else {
-                deldir($fullPath);
+                deleteDir($fullPath);
             }
         }
     }

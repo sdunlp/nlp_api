@@ -35,7 +35,7 @@ class Index extends Controller {
         if($lang == 'en')
             exec('python '.ROOT_PATH.'application\common\nlp_system\en\demo.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result);
         else if($lang == 'zh-CN')
-            abort(501,'not implement yet.');
+            exec('python '.ROOT_PATH.'application\common\nlp_system\zh-CN\nlpChinese.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result);
         Session::set('data',json_decode(implode('', $result)));
     }
 

@@ -28,15 +28,33 @@ class Index extends Controller {
         foreach ($files as $file){
             $info = $file->validate(['ext'=>'txt'])->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity,'');
             if(!$info){
-                abort(500,'upload failed: '.$file->getError());
+                abort(415,'upload failed: '.$file->getError());
             }
         }
         $result = array();
+        $return_var = 0;
         if($lang == 'en')
-            exec('python '.ROOT_PATH.'application\common\nlp_system\en\demo.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result);
+            exec('python '.ROOT_PATH.'application\common\nlp_system\en\demo.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result,$return_var);
         else if($lang == 'zh-CN')
-            exec('python '.ROOT_PATH.'application\common\nlp_system\zh-CN\nlpChinese.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result);
-        Session::set('data',json_decode(implode('', $result)));
+            exec('python '.ROOT_PATH.'application\common\nlp_system\zh-CN\nlpChinese.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result,$return_var);
+        if($return_var == 0){
+            $json = json_decode(implode('', $result),true);
+            $ret = array();
+            foreach ($json as $key=>$value){
+                if($value['code'] != 0){
+                    $ret[] = array('name'=>$key, 'message'=>$value['message']);
+                    unset($json[$key]);
+                }else{
+                    unset($json[$key]['message']);
+                    unset($json[$key]['code']);
+                }
+            }
+            Session::set('data', $json);
+            return $ret;
+        }else{
+            abort(500,'execution failed: python internal exception.');
+        }
+        return [];
     }
 
     public function unload(Request $request){

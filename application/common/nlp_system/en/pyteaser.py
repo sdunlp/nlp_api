@@ -150,6 +150,29 @@ def split_words(text):
         print "Error while splitting characters"
         return None
 
+def keywords5(text):
+    """get the top 10 keywords and their frequency scores
+    ignores blacklisted words in stopWords,
+    counts the number of occurrences of each word
+    """
+    text = split_words(text)
+    numWords = len(text)  # of words before removing blacklist words
+    freq = Counter(x for x in text if x not in stopWords)
+
+    minSize = min(5, len(freq))  # get first 10
+    result=[]
+    keywords = {x: y for x, y in freq.most_common(minSize)}  # recreate a dict
+
+    for k in keywords:
+        word={
+            "word":k,
+            "frequency":keywords[k]*1.0/numWords
+        }
+        result.append(word)
+        # articleScore = keywords[k]*1.0 / numWords
+        # keywords[k] = articleScore * 1.5 + 1
+
+    return result
 
 def keywords(text):
     """get the top 10 keywords and their frequency scores

@@ -4,13 +4,12 @@ namespace app\controller;
 
 use think\Controller;
 use think\Request;
-use think\Session;
 
 class Index extends Controller {
 
 	public function upload(Request $request){
 	    //预处理
-        $this->unload($request);
+        $this->unload();
 
 	    //取得参数
         $files = $request->file('files');
@@ -24,7 +23,7 @@ class Index extends Controller {
 
         //开始执行
         $identity = time();
-        Session::set('identity',$identity);
+        session('identity',$identity);
         foreach ($files as $file){
             $info = $file->validate(['ext'=>'txt'])->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity,'');
             if(!$info){
@@ -49,7 +48,7 @@ class Index extends Controller {
                     unset($json[$key]['code']);
                 }
             }
-            Session::set('data', $json);
+            session('data', $json);
             return $ret;
         }else{
             abort(500,'execution failed: python internal exception.');
@@ -57,11 +56,36 @@ class Index extends Controller {
         return [];
     }
 
-    public function unload(Request $request){
-	    if(Session::has('identity')){
-	        $identity = $request->session('identity');
+    public function unload(){
+	    if(session('?identity')){
+	        $identity = session('identity');
             deleteDir(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity);
-            Session::clear();
+            session(null);
         }
+    }
+
+    public function keywords(){
+        if(session('?data')){
+            $data = session('data');
+            $result = array();
+            foreach ($data as $file=>$value){
+                foreach ($value['keywords'] as $keyword){
+                    if(isset($result[$keyword['word']])){
+                        $result[$keyword['word']]['frequency'] += $keyword['frequency'];
+                        $result[$keyword['word']]['count'] ++;
+                    }else{
+                        $result[$keyword['word']] = ['frequency'=>$keyword['frequency'],'count'=>1];
+                    }
+                }
+            }
+            $ret = array();
+            foreach ($result as $keyword=>$value){
+                $ret[] = ['word'=>$keyword,'frequency'=>$value['frequency'] / $value['count']];
+            }
+            return $ret;
+        }else{
+            abort(404,"No file uploaded.");
+        }
+        return [];
     }
 }

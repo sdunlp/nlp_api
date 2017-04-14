@@ -13,5 +13,6 @@ return [
 				'name' => '\w+'
 		],
         'upload' => ['index/upload',['method'=>'post']],
-        'unload' => ['index/unload',['method'=>'get']]
+        'unload' => ['index/unload',['method'=>'get']],
+        'keywords' => ['index/keywords',['method'=>'get']]
 ];

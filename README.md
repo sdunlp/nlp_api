@@ -13,7 +13,7 @@ NLP_API
         "keywords": [
             {
                 "word": "习近平",
-                "frequency": 3
+                "frequency": 0.01234
             }
         ],
         "sentiment": 0.8
@@ -68,5 +68,31 @@ GET
 
 #### 错误状态码
 无
+
+***
+
+### 获取关键词及词频
+
+#### URL
+/nlp_api/public/keywords
+
+#### 方法
+GET
+
+#### 参数
+无
+
+#### 返回值
+关键词及词频数组：
+```json
+[
+{"word":"苟", "frequency":0.001}
+]
+```
+word        //关键词  
+frequency   //词频（该词在其所有出现过的文章中的频率的平均值）
+
+#### 错误状态码
+404 没有上传文件提供分析
 
 ***

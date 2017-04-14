@@ -84,30 +84,30 @@ def getJson(fold, filename):
         for w in keyword_rank.top_index(5):
             if wordcount == 0:
                 word0["word"] = w
-                word0["frequency"] = cotent.count(w)
+                word0["frequency"] = float(cotent.count(w))/float(len(cotent))
 
             if wordcount == 1:
                 word1["word"] = w
-                word1["frequency"] = cotent.count(w)
+                word1["frequency"] = float(cotent.count(w))/float(len(cotent))
             if wordcount == 2:
                 word2["word"] = w
-                word2["frequency"] = cotent.count(w)
+                word2["frequency"] = float(cotent.count(w))/float(len(cotent))
             if wordcount == 3:
                 word3["word"] = w
-                word3["frequency"] = cotent.count(w)
+                word3["frequency"] = float(cotent.count(w))/float(len(cotent))
             if wordcount == 4:
                 word4["word"] = w
-                word4["frequency"] = cotent.count(w)
+                word4["frequency"] = float(cotent.count(w))/float(len(cotent))
             wordcount += 1
 
         s = SnowNLP(cotent)
         score = (s.sentiments - 0.5) * 2  # -1-1规范化
 
         keywords = [word0, word1, word2, word3, word4]
-        result["code"] = 1
+        result["code"] = 0
         result["message"] = "sucess"
     except IOError:
-        result["code"] = 0
+        result["code"] = 1
         result["message"] = "wrong format"
         return result
 
@@ -126,7 +126,23 @@ if __name__ == '__main__':
     ret = getListFiles(fold);
     data = {}
     for each in ret:
-        result = getJson(fold, each)
+        try:
+            result = getJson(fold, each)
+        except BaseException:
+            ret = {}
+            ret["code"] = 1
+            ret["message"] = "wrong format"
+            result = ret
+        except ZeroDivisionError:
+            ret={}
+            ret["code"] = 1
+            ret["message"] = "wrong format"
+            result =ret
+        except ValueError, e:
+            ret = {}
+            ret["code"] = 1
+            ret["message"] = "wrong format"
+            result = ret
         data[each] = result
 
     jsonStr = json.dumps(data, ensure_ascii=False)

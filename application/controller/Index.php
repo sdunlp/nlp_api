@@ -25,7 +25,7 @@ class Index extends Controller {
         $identity = time();
         session('identity',$identity);
         foreach ($files as $file){
-            $info = $file->validate(['ext'=>'txt'])->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity,'');
+            $info = $file->validate(['ext'=>'txt'])->move(ROOT_PATH . 'uploads' . DS . $identity,'');
             if(!$info){
                 abort(415,'upload failed: '.$file->getError());
             }
@@ -33,9 +33,9 @@ class Index extends Controller {
         $result = array();
         $return_var = 0;
         if($lang == 'en')
-            exec('python '.ROOT_PATH.'application\common\nlp_system\en\demo.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result,$return_var);
+            exec('python '.ROOT_PATH.'application' . DS . 'common' . DS . 'nlp_system' . DS . 'en' . DS . 'demo.py '.escapeshellarg(ROOT_PATH . 'uploads' . DS . $identity . DS),$result,$return_var);
         else if($lang == 'zh-CN')
-            exec('python '.ROOT_PATH.'application\common\nlp_system\zh-CN\nlpChinese.py '.escapeshellarg(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity . DS),$result,$return_var);
+            exec('python '.ROOT_PATH.'application' . DS . 'common' . DS . 'nlp_system' . DS . 'zh-CN' . DS . 'nlpChinese.py '.escapeshellarg(ROOT_PATH . 'uploads' . DS . $identity . DS),$result,$return_var);
         if($return_var == 0){
             $json = json_decode(implode('', $result),true);
             $ret = array();
@@ -59,7 +59,7 @@ class Index extends Controller {
     public function unload(){
 	    if(session('?identity')){
 	        $identity = session('identity');
-            deleteDir(ROOT_PATH . 'public' . DS . 'uploads' . DS . $identity);
+            deleteDir(ROOT_PATH . 'uploads' . DS . $identity);
             session(null);
         }
     }
